@@ -24,6 +24,7 @@ import rental.Reservation;
 public class ManagerSession implements ManagerSessionRemote {
         
     @PersistenceContext protected EntityManager em; //container managed entity manager
+        
     
     public void registerCompany(String filename){
         CarRentalCompany rental = loadRental(filename);
