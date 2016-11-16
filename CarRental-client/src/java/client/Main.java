@@ -38,14 +38,18 @@ public class Main extends AbstractTestManagement<CarRentalSessionRemote, Manager
 
     @Override
     protected CarRentalSessionRemote getNewReservationSession(String name) throws Exception {
-        // ms out = (MS) new initialcontext(IC.lookup(MS.Class.name()))
-        //return out;
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        CarRentalSessionRemote session = (CarRentalSessionRemote) new InitialContext().lookup(CarRentalSessionRemote.class.getName());
+        session.setRenterName(name);
+        return session;
     }
 
     @Override
     protected ManagerSessionRemote getNewManagerSession(String name, String carRentalName) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        ManagerSessionRemote session = (ManagerSessionRemote) new InitialContext().lookup(ManagerSessionRemote.class.getName());
+        // might want to add a name and carrentalname to managersession
+        return session;
     }
 
     @Override
