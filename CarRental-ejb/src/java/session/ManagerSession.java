@@ -22,7 +22,7 @@ import rental.Reservation;
 
 @Stateless
 public class ManagerSession implements ManagerSessionRemote {
-    
+        
     @PersistenceContext protected EntityManager em; //container managed entity manager
     
     public void registerCompany(String filename){
