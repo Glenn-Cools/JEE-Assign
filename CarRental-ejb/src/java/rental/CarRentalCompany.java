@@ -11,6 +11,12 @@ import java.util.logging.Logger;
 import javax.persistence.*;
 
 @javax.persistence.Entity
+@NamedQueries({
+    @NamedQuery(name="Rental.FindAll", query ="SELECT c FROM CarRentalCompany c"),
+    @NamedQuery(name="Rental.FindByName", query = "SELECT c FROM CarRentalCompany c WHERE c.name LIKE :companyName"),
+    @NamedQuery(name="Rental.FindAllTypes", query ="SELECT type FROM (SELECT c.carTypes FROM CarRentalCompany c WHERE c.name LIKE :companyName) type"),
+    @NamedQuery(name="Rental.FindAllCars", query = "SELECT car FROM (SELECT c.cars FROM CarRentalCompany c WHERE c.name LIKE :companyName) car")
+})
 public class CarRentalCompany {
 
     private static Logger logger = Logger.getLogger(CarRentalCompany.class.getName());

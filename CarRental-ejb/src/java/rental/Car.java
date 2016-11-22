@@ -6,6 +6,10 @@ import java.util.Set;
 import javax.persistence.*;
 
 @javax.persistence.Entity
+@NamedQueries({
+    @NamedQuery(name="Car.FindReservationsForType", query = "SELECT res FROM (SELECT car.reservations FROM Car c WHERE c.type LIKE :carType) res"),
+    @NamedQuery(name="Car.FindReservationsForTypeForCars", query = "SELECT res FROM (SELECT car.reservations FROM Car c IN :cars WHERE c.type LIKE :carType) res")
+})
 public class Car {
 
     @Id

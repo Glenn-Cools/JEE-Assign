@@ -25,12 +25,13 @@ public class ManagerSession implements ManagerSessionRemote {
         
     @PersistenceContext protected EntityManager em; //container managed entity manager
         
-    
+    @Override
     public void registerCompany(String filename){
         CarRentalCompany rental = loadRental(filename);
         em.persist(rental);
     }
     
+    @Override
     public void unregisterCompany(String company) throws IllegalArgumentException {
         try{
             CarRentalCompany rental = em.find(CarRentalCompany.class, company);
@@ -40,24 +41,20 @@ public class ManagerSession implements ManagerSessionRemote {
         }
     }
     
+    
     public List<CarRentalCompany> getAllRentals(){        
-        String queryString = "Select c FROM CarRentalCompany c";
-        Query query = em.createQuery(queryString);
-        
+        Query query = em.createNamedQuery("Rental.FindAll", CarRentalCompany.class);
         return query.getResultList();
     }
     
     @Override
-    public Set<CarType> getCarTypes(String company) {
-        try {
-            return new HashSet<CarType>(RentalStore.getRental(company).getAllTypes());
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(ManagerSession.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
+    public Set<CarType> getCarTypes(String company){   
+        Query query = em.createNamedQuery("Rental.FindAllTypes", CarType.class);
+        query.setParameter("companyName", company);
+        return new HashSet<CarType>(query.getResultList());
     }
-
-    @Override
+    
+   @Override
     public Set<Integer> getCarIds(String company, String type) {
         Set<Integer> out = new HashSet<Integer>();
         try {
@@ -72,27 +69,22 @@ public class ManagerSession implements ManagerSessionRemote {
     }
 
     @Override
-    public int getNumberOfReservations(String company, String type, int id) {
-        try {
-            return RentalStore.getRental(company).getCar(id).getReservations().size();
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(ManagerSession.class.getName()).log(Level.SEVERE, null, ex);
-            return 0;
-        }
-    }
-
-    @Override
     public int getNumberOfReservations(String company, String type) {
-        Set<Reservation> out = new HashSet<Reservation>();
-        try {
-            for(Car c: RentalStore.getRental(company).getCars(type)){
-                out.addAll(c.getReservations());
-            }
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(ManagerSession.class.getName()).log(Level.SEVERE, null, ex);
-            return 0;
-        }
-        return out.size();
+        Query companyQuery = em.createNamedQuery("Rental.FindAllCars",Car.class);
+        companyQuery.setParameter("companyName", company);
+        
+        Query resQuery = em.createNamedQuery("Car.FindReservationsForTypeForCars", Reservation.class);
+        resQuery.setParameter("cars", companyQuery.getResultList());
+        resQuery.setParameter("carType", type);
+
+        return resQuery.getResultList().size();
+    }
+    
+    public Set<String> getBestClients(){
+        
+        Query NBResQuery = em.createNamedQuery("Reservation.FindBestClients",String.class);
+           
+        return null;
     }
     
     public static CarRentalCompany loadRental(String datafile) {
