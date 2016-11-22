@@ -3,8 +3,9 @@ package session;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -84,7 +85,23 @@ public class ManagerSession implements ManagerSessionRemote {
         
         Query NBResQuery = em.createNamedQuery("Reservation.FindBestClients",String.class);
            
-        return null;
+        return new HashSet<String>(NBResQuery.getResultList());
+    }
+    
+    public Set<CarType> getMostPopularCarType(String company, int year){
+        
+        Calendar c = Calendar.getInstance();
+        c.set(year, 0, 1);
+        Date beginDate = c.getTime();
+        c.set(year+1, 0, 1);
+        Date endDate =c.getTime();
+        
+        Query popTypeQuery = em.createNamedQuery("Reservation.FindMostPopularCarTypeForCompanyAndPeriod",CarType.class);
+        popTypeQuery.setParameter("companyName", company);
+        popTypeQuery.setParameter("beginDate", beginDate);
+        popTypeQuery.setParameter("endDate", endDate);
+           
+        return new HashSet<CarType>(popTypeQuery.getResultList());
     }
     
     public static CarRentalCompany loadRental(String datafile) {
