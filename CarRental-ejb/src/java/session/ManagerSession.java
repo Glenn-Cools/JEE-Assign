@@ -81,6 +81,7 @@ public class ManagerSession implements ManagerSessionRemote {
         return resQuery.getResultList().size();
     }
     
+    @Override
     public Set<String> getBestClients(){
         
         Query NBResQuery = em.createNamedQuery("Reservation.FindBestClients",String.class);
@@ -88,7 +89,8 @@ public class ManagerSession implements ManagerSessionRemote {
         return new HashSet<String>(NBResQuery.getResultList());
     }
     
-    public Set<CarType> getMostPopularCarType(String company, int year){
+    @Override
+    public CarType getMostPopularCarType(String company, int year){
         
         Calendar c = Calendar.getInstance();
         c.set(year, 0, 1);
@@ -101,7 +103,7 @@ public class ManagerSession implements ManagerSessionRemote {
         popTypeQuery.setParameter("beginDate", beginDate);
         popTypeQuery.setParameter("endDate", endDate);
            
-        return new HashSet<CarType>(popTypeQuery.getResultList());
+        return (CarType) popTypeQuery.getSingleResult();
     }
     
     public static CarRentalCompany loadRental(String datafile) {
@@ -127,7 +129,7 @@ public class ManagerSession implements ManagerSessionRemote {
         int nextuid = 0;
        
         //open file from jar
-        BufferedReader in = new BufferedReader(new InputStreamReader(RentalStore.class.getClassLoader().getResourceAsStream(datafile)));
+        BufferedReader in = new BufferedReader(new InputStreamReader(ManagerSession.class.getClassLoader().getResourceAsStream(datafile)));
         
         try {
             while (in.ready()) {
