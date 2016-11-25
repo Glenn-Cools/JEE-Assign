@@ -29,7 +29,10 @@ import javax.persistence.*;
                         +" (SELECT car FROM (SELECT c.cars FROM CarRentalCompany c WHERE c.name LIKE :companyName) car)"
                     +" AND r.startDate BETWEEN :beginDate AND :endDate )"
                 + " GROUP BY car.type)"
-    )
+    ),
+    @NamedQuery(name="Rental.FindAvailableCarTypes", query="SELECT c.type FROM "
+            + "(SELECT c.type FROM Car c WHERE NOT EXIST Reservation r WHERE r.carId = c.id)"
+            + "WHERE c.price = MIN(c.type) FROM (SELECT c.type FROM Car c WHERE NOT EXIST Reservation r WHERE r.carId = c.id)")
 })
 public class Reservation extends Quote {
     

@@ -16,7 +16,10 @@ import javax.persistence.*;
     @NamedQuery(name="Rental.FindAllCompanyNames", query= "SELECT c.name FROM CarRentalCompany c"),
     @NamedQuery(name="Rental.FindByName", query = "SELECT c FROM CarRentalCompany c WHERE c.name LIKE :companyName"),
     @NamedQuery(name="Rental.FindAllTypes", query ="SELECT type FROM (SELECT c.carTypes FROM CarRentalCompany c WHERE c.name LIKE :companyName) type"),
-    @NamedQuery(name="Rental.FindAllCars", query = "SELECT car FROM (SELECT c.cars FROM CarRentalCompany c WHERE c.name LIKE :companyName) car")
+    @NamedQuery(name="Rental.FindAllCars", query = "SELECT car FROM (SELECT c.cars FROM CarRentalCompany c WHERE c.name LIKE :companyName) car"),
+    @NamedQuery(name="Rental.FindAvailableCarTypes", query="SELECT DISTINCT type FROM CarType type WHERE EXISTS ("
+            + "SELECT * FROM Car c WHERE type = c.type AND ("
+            + "SELECT * FROM Reservation r JOIN Car car ON r.carId=car.carId WHERE r.startdate BETWEEN :beginDate AND :endDate  ))")
 })
 public class CarRentalCompany {
 
